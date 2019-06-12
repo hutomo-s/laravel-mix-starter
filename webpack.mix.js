@@ -1,12 +1,7 @@
-let mix = require('laravel-mix');
-
-require('laravel-mix-imagemin');
-
+const mix = require('laravel-mix')
+require('laravel-mix-imagemin')
 const IS_PRODUCTION = process.env.NODE_ENV === 'production' ? true : false
-
 const publicPath = (IS_PRODUCTION) ? 'public-build' : 'public'
-
-const defaultPublicPath = 'public'
 
 /*
  |--------------------------------------------------------------------------
@@ -49,24 +44,24 @@ mix
                 }),
             ],
         }
-    )
+    ).then(function() {
+        // double build for production
+        if(IS_PRODUCTION)
+        {
+            console.log('copying production build...')
 
-// double build for checking
-if(IS_PRODUCTION)
-{
-	let ncp = require('ncp').ncp
+            let ncp = require('ncp').ncp
+            let source = __dirname + '/public-build'
+            let destination = __dirname + '/public'
 
-	let source = __dirname + '/public-build'
-
-	let destination = __dirname + '/public'
-
-	ncp(source, destination, function (err) {
-	 	if (err) {
-	   		return console.error(err);
-	 	}
-	 	console.log('done!');
-	});
-}
+            ncp(source, destination, function (err) {
+                if (err) {
+                    return console.error(err);
+                }
+                console.log('production build done!')
+            })
+        }
+    })
 
 
 // Full API
